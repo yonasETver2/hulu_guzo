@@ -1,6 +1,7 @@
 import { query } from "@/lib/db_hulu_guzo_user";
+import { NextRequest} from "next/server";
 
-export async function GET(req) {
+export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
 
@@ -8,7 +9,7 @@ export async function GET(req) {
     const departureDate = searchParams.get("departure_date"); // YYYY-MM-DD
     const departureTime = searchParams.get("departure_time"); // HH:MM:SS
     const tripType = searchParams.get("trip_type"); // "first" or "round"
-    const busCode = searchParams.get("bus_code"); // ✅ new param
+    const busCode = searchParams.get("bus_code"); // new param
 
     // Validate required params
     if (
@@ -20,32 +21,35 @@ export async function GET(req) {
     ) {
       return new Response(
         JSON.stringify({ error: "Missing required query parameters" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+        { status: 400, headers: { "Content-Type": "application/json" } },
       );
     }
 
-    // Call stored procedure with 5 params
-    const [rows] = await query("CALL GetBookedSeats(?, ?, ?, ?, ?)", [
-      Number(providerID),
-      departureDate,
-      departureTime,
-      tripType,
-      busCode, // ✅ added
-    ]);
+    // PostgreSQL function call
+    const result = await query(
+      `
+      SELECT * FROM get_booked_seats (
+        $1::int,
+        $2::date,
+        $3::time,
+        $4::text,
+        $5::text
+      )
+      `,
+      [Number(providerID), departureDate, departureTime, tripType, busCode],
+    );
 
-    // Handle MySQL nested array result
-    const seats =
-      Array.isArray(rows) && Array.isArray(rows[0]) ? rows[0] : rows;
+    const seats = result.rows; // Postgres returns rows array
 
     return new Response(JSON.stringify(seats), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching booked seats:", error);
-    return new Response(JSON.stringify({ error: "Database query failed" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: error.message || "Database query failed" }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
+    );
   }
 }

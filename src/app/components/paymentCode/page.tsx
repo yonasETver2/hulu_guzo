@@ -3,7 +3,7 @@
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useGlobalState } from "@/app/globalContext/GlobalState";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
 // Dynamically import components to avoid server-side rendering issues
 const PaymentStatus = dynamic(() => import("./PaymentStatus"), { ssr: false });
@@ -65,7 +65,7 @@ const PaymentCodeClient = () => {
     const timer = setInterval(() => {
       const remaining = Math.max(
         Math.floor((expiryTime - Date.now()) / 1000),
-        0
+        0,
       );
       setRemainingTime(remaining);
       if (remaining <= 0) {

@@ -32,13 +32,15 @@ export default function PhoneDropdown({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (phoneRef.current && !phoneRef.current.contains(event.target as Node)) {
+      if (
+        phoneRef.current &&
+        !phoneRef.current.contains(event.target as Node)
+      ) {
         onClose(); // call parent to close dropdown
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
   if (!phoneOpen) return null;
@@ -47,9 +49,7 @@ export default function PhoneDropdown({
     <div
       ref={phoneRef}
       className={`fixed z-50 top-30 right-2 p-5 rounded-md w-[200px] max-h-[400px] overflow-y-auto shadow-emerald-300 ${
-        status.setting?.theme === "light"
-          ? "bg-gray-200/95"
-          : "bg-gray-900/90"
+        status.setting?.theme === "light" ? "bg-gray-200/95" : "bg-gray-900/90"
       }`}
     >
       {providers.map((provider) => (

@@ -1,76 +1,112 @@
-// lib/authOptions.ts
+// src/lib/authOptions.ts
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import type { NextAuthOptions, DefaultUser } from "next-auth";
-import { query } from "@/lib/db";
+import { query } from "@/lib/db"; // your database helper
 import bcrypt from "bcryptjs";
 
-// Custom user interface extending DefaultUser
-export interface MyUser extends DefaultUser {
-  id: string;           // must be string
-  user_type?: string;    // optional custom field
+// ------------------------
+// Extend NextAuth types
+// ------------------------
+declare module "next-auth/jwt" {
+  interface JWT {
+    id?: string | number;
+    userType?: string;
+  }
 }
 
-export const authOptions: NextAuthOptions = {
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id?: string | number;
+      name?: string;
+      email?: string;
+      userType?: string;
+    };
+  }
+
+  interface User {
+    id?: string | number;
+    userType?: string;
+  }
+}
+
+// ------------------------
+// NextAuth options
+// ------------------------
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email or Username", type: "text" },
+        email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
         userType: { label: "User Type", type: "text" },
       },
+
       async authorize(credentials) {
         if (!credentials) return null;
 
         const { email, password, userType } = credentials;
+        if (!email || !password || !userType) return null;
 
         try {
-          const results: any = await query("CALL checkUserMatchUser(?, ?)", [
-            email,
-            userType,
-          ]);
+          // Fetch user from database
+          const result = await query(
+            `SELECT * FROM checkUserMatchUser($1, $2)`,
+            [email, userType]
+          );
 
-          const user = results[0][0];
+          const user = result.rows?.[0];
           if (!user) return null;
 
-          const isMatch = await bcrypt.compare(password, user.usr_password);
-          if (!isMatch) return null;
+          // Compare password if stored as hash
+          const isValidPassword = await bcrypt.compare(password, user.usr_password);
+          if (!isValidPassword) return null;
 
-          // Always convert id to string
+          // Return user object for NextAuth
           return {
-            id: String(user.sign_up_id),
+            id: user.sign_up_id,
             name: user.user_name,
             email: user.email_adress,
-            user_type: user.user_type,
-          } as MyUser;
-        } catch (error) {
-          console.error("Authorize error:", error);
+            userType: user.user_type,
+          };
+        } catch (err: unknown) {
+          console.error("Authorize error:", err);
           return null;
         }
       },
     }),
   ],
 
+  pages: {
+    signIn: "/auth/signin",
+  },
+
   session: {
     strategy: "jwt",
+  },
+
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET,
   },
 
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.user = user as MyUser;
+        token.id = user.id;
+        token.userType = user.userType;
       }
       return token;
     },
+
     async session({ session, token }) {
-      if (token?.user) {
-        session.user = token.user as MyUser;
-      }
+      if (token?.id) session.user.id = token.id;
+      if (token?.userType) session.user.userType = token.userType;
       return session;
     },
   },
 
-  pages: {
-    signIn: "/components/login",
-  },
+  debug: process.env.NODE_ENV === "development",
 };
+
+export default NextAuth(authOptions);

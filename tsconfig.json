@@ -33,6 +33,6 @@
     "src/app/components/result/bus_root/bus_root.tsx",
     "src/app/api/getBookedSeats/route.ts",
     ".next/dev/types/**/*.ts"
-  ],
+, "src/app/api/addTripInfo/route.js"  ],
   "exclude": ["node_modules"]
 }

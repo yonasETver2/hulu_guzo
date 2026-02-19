@@ -13,16 +13,6 @@ interface Seat {
   pos_col: number;
 }
 
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string | number;
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-    };
-  }
-}
 
 function PaymentPage() {
   const { status } = useGlobalState();
@@ -135,7 +125,7 @@ function PaymentPage() {
 
       setLoading(false);
       router.push(
-        `/components/paymentCode?paymentId=${payment_unique_id}&total=${total}&type=${paymentType}`
+        `/ticketComponents/paymentCode?paymentId=${payment_unique_id}&total=${total}&type=${paymentType}`
       );
     } catch (err) {
       console.error(err);

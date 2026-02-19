@@ -72,20 +72,19 @@ export default function Tiket() {
     return <p className="text-center mt-32">No tickets found</p>;
 
   const normalizeDateTime = (date?: string | Date | null | number): string => {
-  if (!date) return "N/A";
+    if (!date) return "N/A";
 
-  const d = date instanceof Date ? date : new Date(date);
-  if (isNaN(d.getTime())) return "N/A";
+    const d = date instanceof Date ? date : new Date(date);
+    if (isNaN(d.getTime())) return "N/A";
 
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  const hh = String(d.getHours()).padStart(2, "0");
-  const min = String(d.getMinutes()).padStart(2, "0");
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const hh = String(d.getHours()).padStart(2, "0");
+    const min = String(d.getMinutes()).padStart(2, "0");
 
-  return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
-};
-
+    return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+  };
 
   // GROUP BY DATE
   const grouped = tickets.reduce((acc: any, ticket) => {

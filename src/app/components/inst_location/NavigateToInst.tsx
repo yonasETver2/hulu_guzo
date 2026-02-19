@@ -40,6 +40,23 @@ export default function NavigateToInst() {
   const [phoneOpen, setPhoneOpen] = useState(false);
   const handlePhoneClick = () => setPhoneOpen(!phoneOpen);
 
+  useEffect(() => {
+    const fetchProviders = async () => {
+      try {
+        const res = await fetch("/api/getProviderNamePhone"); // Your API
+        const data = await res.json();
+
+        if (Array.isArray(data)) {
+          setProviders(data); // Store all providers
+        }
+      } catch (err) {
+        console.error("Error loading providers:", err);
+      }
+    };
+
+    fetchProviders();
+  }, []);
+
   // ✅ safely react to URL param
   useEffect(() => {
     if (destinationParam) {
@@ -65,7 +82,7 @@ export default function NavigateToInst() {
       () => {
         setError("Unable to fetch location.");
         setLoading(false);
-      }
+      },
     );
   }, []);
 
@@ -127,9 +144,7 @@ export default function NavigateToInst() {
       </div>
 
       <div className="px-4">
-        {loading && (
-          <p className="text-[#5376f6]">Fetching your location...</p>
-        )}
+        {loading && <p className="text-[#5376f6]">Fetching your location...</p>}
         {error && <p className="text-red-500 font-medium">{error}</p>}
       </div>
 

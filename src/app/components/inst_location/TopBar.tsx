@@ -25,7 +25,7 @@ export default function TopBar({
     <div
       className={`fixed top-16 left-0 w-full p-4 shadow-md ${
         status.setting?.theme === "light" ? "bg-gray-50" : "bg-gray-700"
-      } flex justify-between items-center z-30`}
+      } flex justify-between items-center z-[9999]`}
     >
       <ActionButtons
         status={status}

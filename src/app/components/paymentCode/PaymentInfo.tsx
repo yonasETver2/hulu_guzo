@@ -31,7 +31,8 @@ const PaymentInfo: React.FC<PaymentInfoProps> = ({
           {total ? Number(total).toLocaleString() : "0"}
         </span>{" "}
         {status.setting?.lang === "en" ? "birr to" : "ብር በ"}{" "}
-        <span className="capitalize">{bankType}</span>
+        <span className="capitalize">{bankType?.toUpperCase()}</span>
+
         {bankType?.toLowerCase() === "telebirr"
           ? ""
           : status.setting?.lang === "en"

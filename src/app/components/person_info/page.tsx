@@ -52,7 +52,7 @@ function PersonIn() {
 
   // Initialize passengers with correct typing
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [passengers, setPassengers] = useState<Passenger[]>(  
+  const [passengers, setPassengers] = useState<Passenger[]>(
     passengersData[tripKey]?.length === passengerCount
       ? passengersData[tripKey]
       : Array.from({ length: passengerCount }, () => ({
@@ -64,7 +64,7 @@ function PersonIn() {
           sex: "",
           station: "",
           seat: "N/A", // Default seat value
-        }))
+        })),
   );
 
   const [firstName, setFirstName] = useState("");
@@ -86,14 +86,14 @@ function PersonIn() {
         const url =
           tripType === "one-way"
             ? `/api/getStation?source_city=${encodeURIComponent(
-                cityOne
+                cityOne,
               )}&destination_city=${encodeURIComponent(
-                cityTwo
+                cityTwo,
               )}&provider_id=${provider_id}`
             : `/api/getStation?source_city=${encodeURIComponent(
-                cityTwo
+                cityTwo,
               )}&destination_city=${encodeURIComponent(
-                cityOne
+                cityOne,
               )}&provider_id=${provider_id}`;
 
         const res = await fetch(url);
@@ -101,7 +101,7 @@ function PersonIn() {
 
         if (Array.isArray(data)) {
           const uniqueStations = Array.from(
-            new Map(data.map((s: any) => [s.station_name, s])).values()
+            new Map(data.map((s: any) => [s.station_name, s])).values(),
           );
           setStationOptions(uniqueStations);
         } else {
@@ -128,7 +128,8 @@ function PersonIn() {
       setNationalID(passenger.nationalID || "");
       setSex(passenger.sex || "");
       setSelectedStation(
-        stationOptions.find((s) => s.station_name === passenger.station) || null
+        stationOptions.find((s) => s.station_name === passenger.station) ||
+          null,
       );
     }
   }, [currentIndex, passengers, stationOptions]);
@@ -145,7 +146,7 @@ function PersonIn() {
       alert(
         status.setting?.lang === "en"
           ? "Please fill in all fields before proceeding."
-          : "እባኮን ከመቀጠሎ በፊት ሁሉንም ቦታዎች ይሙሉ"
+          : "እባኮን ከመቀጠሎ በፊት ሁሉንም ቦታዎች ይሙሉ",
       );
       return;
     }

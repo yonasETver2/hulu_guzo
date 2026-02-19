@@ -47,9 +47,7 @@ const PassengerInputs = ({
           id="mName"
           className="w-full border p-2 rounded"
           placeholder={
-            status.setting?.lang === "en"
-              ? "Enter middle name"
-              : "የአባት ስም ያስገቡ"
+            status.setting?.lang === "en" ? "Enter middle name" : "የአባት ስም ያስገቡ"
           }
         />
       </div>
@@ -65,9 +63,7 @@ const PassengerInputs = ({
           id="lName"
           className="w-full border p-2 rounded"
           placeholder={
-            status.setting?.lang === "en"
-              ? "Enter last name"
-              : "የአያት ስም ያስገቡ"
+            status.setting?.lang === "en" ? "Enter last name" : "የአያት ስም ያስገቡ"
           }
         />
       </div>
@@ -133,9 +129,7 @@ const PassengerInputs = ({
           className="w-full border p-2 rounded"
           type="text"
           placeholder={
-            status.setting?.lang === "en"
-              ? "Enter FIN number"
-              : "የፋይዳ ቁጥር ያስገቡ"
+            status.setting?.lang === "en" ? "Enter FIN number" : "የፋይዳ ቁጥር ያስገቡ"
           }
         />
       </div>
